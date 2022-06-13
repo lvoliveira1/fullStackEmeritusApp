@@ -8,5 +8,5 @@ export const changePasswordUrl = async (userId: ObjectId) => {
 
     await redis.set(`${forgotPasswordPrefix}${token}`, userId.toHexString(), "EX", 60 * 60 * 24); // 1 day expiration
 
-    return `http://localhost:3000/user/change-password/${token}`;
+    return `${process.env.FE_APP_URI}/user/change-password/${token}`;
 };

@@ -3,6 +3,8 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
+    "export": "next export",
+    "static": "yarn build && yarn export",
     "start": "next start",
     "ggen": "graphql-codegen --config codegen.yml"
   },

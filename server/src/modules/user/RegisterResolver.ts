@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
 import { Arg, Mutation, Resolver } from "type-graphql";
-import { sendEmail } from '../utils/sendEmail';
+// import { sendEmail } from '../utils/sendEmail';
 import { User } from './../../entity/User';
-import { createConfirmationUrl } from './../utils/createConfirmationUrl';
+// import { createConfirmationUrl } from './../utils/createConfirmationUrl';
 import { RegisterInput } from './register/RegisterInput';
 
 @Resolver()
@@ -18,14 +18,15 @@ export class RegisterResolver {
                 firstName,
                 lastName,
                 email,
-                password: hashedPass
+                password: hashedPass,
+                confirmed: true
             })
             .save();
 
-        await sendEmail(
-            email,
-            await createConfirmationUrl(user.id as any)
-        );
+        // await sendEmail(
+        //     email,
+        //     await createConfirmationUrl(user.id as any)
+        // );
 
         return user;
     }

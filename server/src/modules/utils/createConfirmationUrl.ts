@@ -8,5 +8,5 @@ export const createConfirmationUrl = async (userId: ObjectId) => {
 
     await redis.set(`${confirmUserEmailPrefix}${token}`, userId.toHexString(), "EX", 60 * 60 * 24); // 1 day expiration
 
-    return `http://localhost:3000/user/confirm/${token}`;
+    return `${process.env.FE_APP_URI}/user/confirm/${token}`;
 };

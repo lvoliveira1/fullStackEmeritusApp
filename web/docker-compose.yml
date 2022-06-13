@@ -7,6 +7,8 @@ services:
       - 3000:3000
     command: yarn dev
     working_dir: /app
+    env_file:
+      - .env
     volumes:
       - $PWD:/app
     networks:

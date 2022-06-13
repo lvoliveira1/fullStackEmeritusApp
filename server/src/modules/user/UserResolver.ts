@@ -1,10 +1,10 @@
-import { Query, Resolver } from "type-graphql";
+import { Query, Resolver, UseMiddleware } from "type-graphql";
 import { User } from './../../entity/User';
-// import { isAuthenticated } from './../middleware/isAuthenticated';
+import { isAuthenticated } from './../middleware/isAuthenticated';
 
 @Resolver()
 export class UserResolver {
-    // @UseMiddleware(isAuthenticated)
+    @UseMiddleware(isAuthenticated)
     @Query(() => [User], { nullable: true })
     async users(
         // @Arg("limit") limit: number,
