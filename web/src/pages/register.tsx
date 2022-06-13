@@ -24,7 +24,7 @@ const Index = () => {
 
   return (
     <Container height="100vh">
-      <Hero title="Register into our bank"/>
+      <Hero />
       <Main>
         <div>Register Page</div>
         <Flex bg="white.100" align="center" justify="center" h="100vh">
