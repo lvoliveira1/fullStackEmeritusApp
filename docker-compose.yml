@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  mongo:
+    image: mongo
+    restart: always
+    command: [--auth]
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+  redis:
+    image: redis
+
+  api:
+    image: node:alpine
+    ports:
+      - 4000:4000
+    command: yarn start
+    working_dir: /app
+    volumes:
+      - $PWD/bad-bank-server:/app
+    depends_on:
+      - mongo
+      - redis
+
+  web:
+    image: node:alpine
+    ports:
+      - 3000:3000
+    command: yarn dev
+    working_dir: /app
+    volumes:
+      - $PWD/bad-bank-web:/app
