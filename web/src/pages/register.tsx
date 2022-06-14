@@ -1,30 +1,41 @@
 import {
   Box,
   Button,
-  Checkbox,
   Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Input,
+  Link,
   VStack,
 } from "@chakra-ui/react";
 import { Field, Formik } from "formik";
 import { useRouter } from "next/router";
 import { Container } from "../components/Container";
-import { DarkModeSwitch } from "../components/DarkModeSwitch";
+import NextLink from "next/link";
 import { Hero } from "../components/Hero";
 import { Main } from "../components/Main";
-import { useRegisterMutation } from "../generated/graphql";
+import { useLoginMutation, useMeQuery, useRegisterMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorsMap";
+import { useEffect } from "react";
 
-const Index = () => {
+const Register = () => {
   const router = useRouter(); 
+  
   const [, register] = useRegisterMutation();
+  const [, login] = useLoginMutation();
+
+  const [{ data, fetching }] = useMeQuery();
+
+  useEffect(() => {  
+    if (!fetching && data?.me) {
+      router.replace('/dashboard');
+    }
+  });
 
   return (
     <Container height="100vh">
-      <Hero />
+    <Hero title="Register into the Bad bank" />
       <Main>
         <div>Register Page</div>
         <Flex bg="white.100" align="center" justify="center" h="100vh">
@@ -35,17 +46,23 @@ const Index = () => {
                 firstName: "",
                 lastName: "",
                 password: "",
-                rememberMe: false,
               }}
-              onSubmit={async ({ rememberMe, ...values }, { setErrors, setStatus }) => {
-                const { error, data } = await register({ data: values });
+              onSubmit={async (values, { setErrors }) => {
+                const { email, password } = values;
+
+                const { error } = await register({ data: values });
+                const { error: loginError } = await login({ email, password });
 
                 if (error?.graphQLErrors) {
                   setErrors(toErrorMap(error.graphQLErrors));
                   return
                 }
 
-                router.push('/');
+                if (loginError?.graphQLErrors) {
+                  router.push('/');
+                }
+
+                router.push('/dashboard');
               }}
             >
               {({ isSubmitting, handleSubmit, errors, touched }) => (
@@ -108,21 +125,16 @@ const Index = () => {
                       />
                       <FormErrorMessage>{errors.password}</FormErrorMessage>
                     </FormControl>
-                    <Field
-                      as={Checkbox}
-                      id="rememberMe"
-                      name="rememberMe"
-                      colorScheme="purple"
-                    >
-                      Remember me?
-                    </Field>
+                    <NextLink href="/">
+                      <Link>Login</Link>
+                    </NextLink>
                     <Button
                       type="submit"
                       isLoading={isSubmitting}
                       colorScheme="purple"
                       width="full"
                     >
-                      Login
+                      Create an Account
                     </Button>
                   </VStack>
                 </form>
@@ -131,14 +143,8 @@ const Index = () => {
           </Box>
         </Flex>
       </Main>
-
-      <DarkModeSwitch />
-      {/* <Footer>
-      <Text>Next ❤️ Chakra</Text>
-    </Footer> */}
-      {/* <CTA /> */}
     </Container>
   );
 };
 
-export default Index;
+export default Register;

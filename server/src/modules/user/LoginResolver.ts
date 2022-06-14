@@ -1,16 +1,18 @@
+import { BankAccount } from './../../entity/BankAccount';
 import bcrypt from 'bcryptjs';
 import { Arg, Ctx, Mutation, Resolver } from "type-graphql";
 import { User } from './../../entity/User';
 import { MyContext } from './../../types/MyContext';
+import { ObjectId } from 'mongodb';
 
 @Resolver(User)
 export class LoginResolver {
-    @Mutation(() => User, { nullable: true })
+    @Mutation(() => BankAccount, { nullable: true })
     async login(
         @Arg("email") email: string,
         @Arg("password") password: string,
         @Ctx() context: MyContext,
-    ): Promise<User | null> {
+    ): Promise<BankAccount | null> {
         const user = await User.findOne({ where: { email } });
 
         if (!user) {
@@ -29,6 +31,6 @@ export class LoginResolver {
 
         context.req.session.userId = user.id.toHexString();
 
-        return user;
+        return BankAccount.findOne({ where: { userId: new ObjectId(user.id) } } as any);
     }
 }

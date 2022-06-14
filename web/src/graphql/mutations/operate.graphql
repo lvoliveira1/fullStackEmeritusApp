@@ -1,5 +1,5 @@
-mutation Register($data: RegisterInput!) {
-  register(data: $data) {
+mutation Operate($bankAccountId: String!, $payload: OperatePayloaInput!) {
+  operate(bankAccountId: $bankAccountId, payload: $payload) {
     id
     userId
     user {
@@ -13,6 +13,7 @@ mutation Register($data: RegisterInput!) {
       operationType
       amount
       description
+      balance
     }
   }
 }

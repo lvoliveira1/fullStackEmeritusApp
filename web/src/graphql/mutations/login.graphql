@@ -1,9 +1,19 @@
 mutation Login($password: String!, $email: String!) {
   login(password: $password, email: $email) {
     id
-    firstName
-    lastName
-    name
-    email
+    userId
+    user {
+      id
+      firstName
+      lastName
+      name
+      email
+    }
+    statments {
+      operationType
+      amount
+      description
+      balance
+    }
   }
 }

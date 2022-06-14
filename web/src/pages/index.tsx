@@ -1,41 +1,37 @@
 import {
   Box,
   Button,
-  Checkbox,
   Flex,
   FormControl,
   FormErrorMessage,
   FormLabel,
   Input,
+  Link,
   VStack
 } from "@chakra-ui/react";
 import { Field, Formik } from "formik";
+import NextLink from "next/link";
 import { useRouter } from "next/router";
 import { Container } from "../components/Container";
-import { DarkModeSwitch } from "../components/DarkModeSwitch";
 import { Hero } from "../components/Hero";
 import { Main } from "../components/Main";
 import { useLoginMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorsMap";
 
-const Index = () => {
+const Login = () => {
   const router = useRouter();
   const [, login] = useLoginMutation();
 
   return (
     <Container height="100vh">
-      <Hero title="Welcome to the Bad bank"/>
+      <Hero title="Welcome to the Bad bank" />
       <Main>
         <Flex bg="white.100" align="center" justify="center" h="100vh">
           <Box bg="white" p={6} rounded="md" w={64}>
             <Formik
-              initialValues={{
-                email: "",
-                password: "",
-                rememberMe: false,
-              }}
+              initialValues={{ email: "", password: "" }}
               onSubmit={async (values, { setErrors }) => {
-                const { error, data } = await login(values);
+                const { error } = await login(values);
 
                 if (error?.graphQLErrors) {
                   setErrors(toErrorMap(error.graphQLErrors));
@@ -81,14 +77,9 @@ const Index = () => {
                       />
                       <FormErrorMessage>{errors.password}</FormErrorMessage>
                     </FormControl>
-                    <Field
-                      as={Checkbox}
-                      id="rememberMe"
-                      name="rememberMe"
-                      colorScheme="purple"
-                    >
-                      Remember me?
-                    </Field>
+                    <NextLink href="/register">
+                      <Link>Register</Link>
+                    </NextLink>
                     <Button
                       type="submit"
                       isLoading={isSubmitting}
@@ -104,14 +95,8 @@ const Index = () => {
           </Box>
         </Flex>
       </Main>
-
-      <DarkModeSwitch />
-      {/* <Footer>
-      <Text>Next ❤️ Chakra</Text>
-    </Footer> */}
-      {/* <CTA /> */}
     </Container>
   );
 };
 
-export default Index;
+export default Login;

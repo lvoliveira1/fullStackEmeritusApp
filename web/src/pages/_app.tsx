@@ -2,10 +2,8 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { cacheExchange } from "@urql/exchange-graphcache";
 import { AppProps } from "next/app";
 import { createClient, dedupExchange, fetchExchange, Provider } from "urql";
-import { LoginMutation, MeDocument, MeQuery } from "../generated/graphql";
+import { LoginMutation, LogoutMutation, MeDocument, MeQuery } from "../generated/graphql";
 import theme from "../theme";
-
-console.log({envs: process.env});
 
 const client = createClient({
   url: `${process.env.NEXT_PUBLIC_BE_APP_URI}/graphql`,
@@ -15,6 +13,9 @@ const client = createClient({
   exchanges: [dedupExchange, cacheExchange({
     updates: {
       Mutation: {
+        logout: (result: LogoutMutation, args, cache, info) => {
+          cache.updateQuery({ query: MeDocument }, (): MeQuery | null => ({ me: null }));
+        },
         login: (result: LoginMutation, args, cache, info) => {
           cache.updateQuery({ query: MeDocument }, (data: MeQuery | null): MeQuery | null => {
             if (!result.login) {

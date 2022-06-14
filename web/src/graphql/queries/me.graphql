@@ -1,9 +1,19 @@
 query Me {
   me {
-    email
-    firstName
     id
-    lastName
-    name
+    userId
+    user {
+      id
+      firstName
+      lastName
+      name
+      email
+    }
+    statments {
+      operationType
+      amount
+      description
+      balance
+    }
   }
 }

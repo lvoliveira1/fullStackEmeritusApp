@@ -9,11 +9,9 @@ export class LogoutResolver {
             (resolve, reject) => 
                 context.req.session.destroy((error: any) => {
                 if (error) {
-                    console.log(error);
                     return reject(false)
                 }
 
-                console.log("cleaning");
                 context.res.clearCookie('qid');
 
                 return resolve(true);

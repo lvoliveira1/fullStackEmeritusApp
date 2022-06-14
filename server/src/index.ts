@@ -1,7 +1,6 @@
 import { getBuiltSchema } from './utils/getBuiltSchema';
 import { ApolloServer } from "apollo-server-express";
 import connectRedis from "connect-redis";
-import cors from "cors";
 import Express from "express";
 import session from "express-session";
 import "reflect-metadata";
@@ -23,17 +22,15 @@ const main = async () => {
 
     const RedisStore = connectRedis(session);
 
-    app.use(
-        cors({
-            credentials: true,
-            origin: [
-                "https://studio.apollographql.com",
-                process.env?.FE_APP_URI || '',
-            ]
-        })
-    );
+    // app.set('trust proxy', process.env.NODE_ENV === 'production')
+    app.set('trust proxy', 1)
 
-    // app.set('trust proxy', process.env.NODE_ENV !== 'production')
+    const cookie = {
+        httpOnly: false,
+        secure: true,
+        maxAge: 1000 * 60 * 60 * 24 * 7 * 365, // 7 years
+        sameSite: 'none' as any,
+    };
 
     app.use(
         session({
@@ -42,34 +39,23 @@ const main = async () => {
             secret: "aslkdfjoiq12312",
             resave: false,
             saveUninitialized: false,
-            cookie: {
-                httpOnly: true,
-                secure: true,
-                maxAge: 1000 * 60 * 60 * 24 * 7 * 365, // 7 years
-                sameSite: 'none',
-            }
+            cookie,
         })
     );
 
-    console.log({
-        name: "qid",
-        secret: "aslkdfjoiq12312",
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            maxAge: 1000 * 60 * 60 * 24 * 7 * 365, // 7 years
-            sameSite: (!process.env?.NODE_ENV || process.env?.NODE_ENV === "development") || 'none',
-        }
-    })
-
     await apolloServer.start();
 
-    apolloServer.applyMiddleware({
-        app,
-        cors: false,
-    });
+    const cors = {
+        credentials: true,
+        origin: [
+            "https://studio.apollographql.com",
+            "https://bad-bad-bank-bank.netlify.app",
+            'https://localhost:3000',
+            process.env?.FE_APP_URI || '',
+        ],
+    };
+
+    apolloServer.applyMiddleware({ app, cors });
 
     app.listen(process.env?.PORT || 4000, () => {
         console.log(`
